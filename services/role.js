@@ -10,7 +10,10 @@ module.exports= (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.SECRET);
     const isAdmin = decodedToken.isAdmin;
     if (!isAdmin) {
-      throw 'Unauthorized';
+      res.status(403).json({
+        status: "error",
+        error: "Access Denied"
+      });
     } else {
       next();
     }

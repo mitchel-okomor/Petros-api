@@ -7,9 +7,14 @@ exports.createArticle = async (req, res) => {
     const id = uuidv4();
     const userId = req.params.id;
       const title = req.body.title;
-     const body = req.body.article;
+      const amount = req.body.amount;
+      const beneficiary = req.body.beneficiary;
+      const ministry = req.body.ministry;
+      const description = req.body.description;
+      const location = req.body.location;
      const dateString = new Date();
-    let queryString = "INSERT INTO `articles` (id, user_id, title, body, date_created) VALUES ('" + id + "', '" +userId +"', '" +title +"', '" +body +"', '"+dateString+"')";
+
+    let queryString = "INSERT INTO `articles` (id, user_id, title, amount, beneficiary, ministry, description, location, date_created) VALUES ('" + id + "', '" +userId +"', '" +title +"', '" +amount +"', '" +beneficiary +"', '" +ministry +"', '" +description +"', '" +location +"', '"+dateString+"')";
     db.query(queryString,   (err, result) => {
           if (err) {
              console.log(err);
@@ -117,14 +122,16 @@ exports.deleteArticle = async (req, res) => {
 //update an articel
 exports.updateArticle = async (req, res) => {
 
-  const id = uuidv4();
-  const userId = req.params.userId;
     const title = req.body.title;
-   const body = req.body.body;
+   const amount = req.body.amount;
+   const beneficiary = req.body.beneficiary;
+   const ministry = req.body.ministry;
+   const description = req.body.description;
+   const location = req.body.location;
    const dateString = new Date();
 
    try{
-     let queryString = "UPDATE `articles` SET title ='" + title + "' , body ='" + body +"' , date_updated =  '" +dateString +"' WHERE id = '" +req.params.id+"' ";
+     let queryString = "UPDATE `articles` SET title ='" + title + "' , amount ='" + amount +"' beneficiary ='" +beneficiary +"', ministry = '" +ministry +"', description = '" +description +"', location ='" +location +"', date_updated =  '" +dateString +"' WHERE id = '" +req.params.id+"' ";
    db.query(queryString,   (err, result) => {
          if (err) {
             console.log(err);
