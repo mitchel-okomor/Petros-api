@@ -3,7 +3,8 @@ const db = require('../services/db');
 
 
 //create an article
-exports.createArticle = async (req, res) => {
+exports.createArticle =  (req, res) => {
+  console.log(req.body);
     const id = uuidv4();
     const userId = req.params.id;
       const title = req.body.title;
@@ -12,10 +13,12 @@ exports.createArticle = async (req, res) => {
       const ministry = req.body.ministry;
       const description = req.body.description;
       const location = req.body.location;
-     const dateString = new Date();
+      const imageUrl = req.file.filename;
+     const dateString = new Date().now;
 
-    let queryString = "INSERT INTO `articles` (id, user_id, title, amount, beneficiary, ministry, description, location, date_created) VALUES ('" + id + "', '" +userId +"', '" +title +"', '" +amount +"', '" +beneficiary +"', '" +ministry +"', '" +description +"', '" +location +"', '"+dateString+"')";
-    db.query(queryString,   (err, result) => {
+    let queryString = "INSERT INTO `articles` (id, user_id, title, amount, beneficiary, ministry, description, location, image_url, date_created) VALUES ('" + id + "', '" +userId +"', '" +title +"', '" +amount +"', '" +beneficiary +"', '" +ministry +"', '" +description +"', '" +location +"', '" +imageUrl +"', '"+dateString+"')";
+  console.log(queryString);
+ db.query(queryString,   (err, result) => {
           if (err) {
              console.log(err);
              return res.status(501).json ({
@@ -66,7 +69,7 @@ exports.article = async (req, res) => {
 //view all articles
 exports.allArticles = async (req, res) => {
   try {
-    let queryString = "SELECT * FROM articles";
+    let queryString = "SELECT * FROM articles LIMIT 10";
     await db.query(queryString,   (err, result) => {
          if(result.length < 0){
               return res.status(400).json ({
@@ -75,7 +78,6 @@ exports.allArticles = async (req, res) => {
              });
             }
             else{
-              console.log(result);
               return res.status(200).json ({
                 status: "success",
                 data: result
@@ -94,8 +96,9 @@ exports.allArticles = async (req, res) => {
 
 //delete an article
 exports.deleteArticle = async (req, res) => {
+  console.log(req.params.id + "" + req.params.userId);
   try {
-    let queryString = "DELETE FROM articles WHERE id = '" + req.params.id +"'";
+    let queryString = "DELETE FROM articles WHERE id = '" + req.params.id +"' AND  '" + req.params.userId +"'";
    await db.query(queryString,   (err, result) => {
          if(err){
               return res.status(400).json ({
@@ -128,10 +131,11 @@ exports.updateArticle = async (req, res) => {
    const ministry = req.body.ministry;
    const description = req.body.description;
    const location = req.body.location;
-   const dateString = new Date();
+   const imageUrl = req.file.filename;
+   const dateString = new Date().now;
 
    try{
-     let queryString = "UPDATE `articles` SET title ='" + title + "' , amount ='" + amount +"' beneficiary ='" +beneficiary +"', ministry = '" +ministry +"', description = '" +description +"', location ='" +location +"', date_updated =  '" +dateString +"' WHERE id = '" +req.params.id+"' ";
+     let queryString = "UPDATE `articles` SET title ='" + title + "' , amount ='" + amount +"', beneficiary ='" +beneficiary +"', ministry = '" +ministry +"', description = '" +description +"', location ='" +location +"', date_updated =  '" +dateString +"', image_url =  '" +imageUrl +"' WHERE id = '" +req.params.id+"' ";
    db.query(queryString,   (err, result) => {
          if (err) {
             console.log(err);

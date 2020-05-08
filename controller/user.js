@@ -45,30 +45,31 @@ db.query(queryString,   (err, result) => {
 
 // login check and assign token
 module.exports.login = (req, res) => {
-  
+  console.log(req.body);
   if(!req.body.password || !req.body.email){ 
-    return  res.status(400).json ({
+    return  res.status(401).json ({
       status: "error",
       error: "Incorrect email or password",
     });
   }
   else{
   let email = req.body.email;
-    let queryString = "SELECT * FROM users WHERE email = '" + email +"'";
+    let queryString = "SELECT * FROM `users` WHERE `email` = '" + email +"' ";
     db.query(queryString,   (err, result) => {
-         if(result.length < 0){
-              return res.status(400).json ({
+         if(result.length < 1){
+              return res.status(400).json({
                status: "error",
                message: 'Incorrect email or password!',
              });
             }
             else{
-              console.log(result[0].id);
+              console.log(result);
              bcrypt
         .compare (req.body.password, result[0].password)
         .then (valid => {
           if (!req.body.password ||!valid) {
-            return res.status(400).json ({
+            return res.status(400).json (
+              {
               status: "error",
               message: 'Incorrect email or password password!',
             });
@@ -83,8 +84,9 @@ module.exports.login = (req, res) => {
           );
           res.json ({
             status: 'success',
+            message: 'Logged in successfully!',
             data: {
-              user: result[0],
+              user: result[0].id,
               token: token,
             },
           });
@@ -106,7 +108,7 @@ module.exports.login = (req, res) => {
 //profile info
 exports.account = async (req, res) => {
   try {
-    let queryString = "SELECT * FROM users WHERE id = '" + req.params.id +"'";
+    let queryString = "SELECT id, firstname, lastname, email, role FROM users WHERE id = '" + req.params.id +"'";
     db.query(queryString,   (err, result) => {
          if(result.length < 0){
               return res.status(400).json ({
@@ -135,7 +137,7 @@ exports.account = async (req, res) => {
 //All Accounts
 exports.allAcounts = async (req, res) => {
   try {
-    let queryString = "SELECT * FROM users";
+    let queryString = "SELECT id, firstname, lastname, email, role FROM users";
     db.query(queryString,   (err, result) => {
          if(result.length < 0){
               return res.status(400).json ({
@@ -163,7 +165,6 @@ exports.allAcounts = async (req, res) => {
 
 
 exports.deleteAccount = async (req, res) => {
-  console.log("delete request received")
   try {
     let queryString = "DELETE FROM users WHERE id = '" + req.params.id +"'";
     db.query(queryString,   (err, result) => {
@@ -190,8 +191,8 @@ exports.deleteAccount = async (req, res) => {
 }
 
 exports.updateAcount = async (req, res) => {
-  
-  bcrypt.hash (req.body.password, 10).then (hash => {
+  try{
+  await   bcrypt.hash (req.body.password, 10).then (hash => {
  let firstName = req.body.firstname;
     let lastName = req.body.lastname;
     let email = req.body.email;
@@ -211,6 +212,14 @@ exports.updateAcount = async (req, res) => {
    );
     
   });
+  }
+  catch(err){
+    return res.status(400).json ({
+      status: "error",
+      message: 'failed to update',
+    });
+  }
+ 
       
  }
 

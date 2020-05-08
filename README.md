@@ -1,0 +1,1 @@
+NodeJS backend api creating, reading, updating and deleting articles. Mysql was used for the database and Multer for uploading images.

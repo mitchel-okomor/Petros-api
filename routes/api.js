@@ -4,22 +4,24 @@ const auth = require('../middleware/auth');
 
 const userController = require('../controller/user');
 const articleController = require('../controller/article');
+const uplaod = require('../middleware/upload');
 
-router.get("/", (req, res)=>{
-res.status(200).send({   message: "welcome to the response to nothingness"}
-)
-});
+//admin page
+router.get("/admin", (req, res)=>{
+res.render('pages/index');});
+
 
 //create user
 router.post('/user', (req,res, next)=>{console.log("request recieved"); next();}, userController.createAccount);
 //get user
-router.get('/user/:id', userController.account);
+router.get('/user/:id', auth, userController.account);
 //get al;l users
-router.get('/users', userController.allAcounts);
+router.get('/users', auth, userController.allAcounts);
 //edit user account
-router.patch('/user/:id', userController.updateAcount);
+router.patch('/user/:id', auth, userController.updateAcount);
 //delete user
-router.delete('/user/:id', userController.deleteAccount);
+router.delete('/user/:id', auth, userController.deleteAccount);
+
 //login user
 router.post('/login', userController.login);
 
@@ -28,11 +30,11 @@ router.get('/article/:id', articleController.article);
 //get all news
 router.get('/articles', articleController.allArticles);
 //add a news
-router.post('/article/:id', articleController.createArticle);
+router.post('/article/:id', uplaod.single('image'), articleController.createArticle);
 //edit a news
-router.patch('/article/:id', articleController.updateArticle);
+router.put('/article/:id', uplaod.single('image'), articleController.updateArticle);
 //delete news
-router.delete('/article/:id', articleController.deleteArticle);
+router.delete('/article/:id/:userId', articleController.deleteArticle);
 
 
 

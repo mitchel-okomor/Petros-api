@@ -10,10 +10,13 @@ const api = require('./routes/api');
 // Set up the express app
 const app = express();
 
+//set view engine
+app.set('view engine', 'ejs');
+
 // Log requests to the console.
 app.use(logger('dev'));
 
-app.use(cors())
+app.use(cors());
   //set CORS
   app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -26,6 +29,8 @@ app.use(cors())
   extended: true
 }));
   app.use(bodyParser.json());
+  //serve static files
+app.use(express.static('public'))
 // Bundle API routes.
 app.use('/', api);
 
