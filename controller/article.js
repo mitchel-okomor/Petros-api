@@ -5,18 +5,14 @@ const db = require('../services/db');
 //create an article
 exports.createArticle =  (req, res) => {
   console.log(req.body);
-    const id = uuidv4();
-    const userId = req.params.id;
-      const title = req.body.title;
-      const amount = req.body.amount;
-      const beneficiary = req.body.beneficiary;
-      const ministry = req.body.ministry;
-      const description = req.body.description;
-      const location = req.body.location;
-      const imageUrl = req.file.filename;
-     const dateString = new Date().now;
+    const id = uuidv4().replace("'", "\\'");
+    const userId = req.params.id.replace("'", "\\'");
+      const title = req.body.title.replace("'", "\\'");
+      const description = req.body.description.replace("'", "\\'");
+      const imageUrl = req.file.filename.replace("'", "\\'");
+     const dateString = req.body.date.replace("'", "\\'");
 
-    let queryString = "INSERT INTO `articles` (id, user_id, title, amount, beneficiary, ministry, description, location, image_url, date_created) VALUES ('" + id + "', '" +userId +"', '" +title +"', '" +amount +"', '" +beneficiary +"', '" +ministry +"', '" +description +"', '" +location +"', '" +imageUrl +"', '"+dateString+"')";
+    let queryString = "INSERT INTO `articles` (id, user_id, title, description, date_created, image_url) VALUES ('" + id + "', '" +userId +"', '" +title +"', '" +description +"', '"+dateString+"','" +imageUrl +"')";
   console.log(queryString);
  db.query(queryString,   (err, result) => {
           if (err) {
@@ -26,6 +22,7 @@ exports.createArticle =  (req, res) => {
               message: 'server error',
             });
           }else{
+            console.log(result);
 return res.status(200).json ({
             status: "success",
             message: 'Article created successfully',
@@ -69,7 +66,7 @@ exports.article = async (req, res) => {
 //view all articles
 exports.allArticles = async (req, res) => {
   try {
-    let queryString = "SELECT * FROM articles LIMIT 10";
+    let queryString = "SELECT * FROM articles LIMIT 10 ";
     await db.query(queryString,   (err, result) => {
          if(result.length < 0){
               return res.status(400).json ({
@@ -125,17 +122,13 @@ exports.deleteArticle = async (req, res) => {
 //update an articel
 exports.updateArticle = async (req, res) => {
 
-    const title = req.body.title;
-   const amount = req.body.amount;
-   const beneficiary = req.body.beneficiary;
-   const ministry = req.body.ministry;
-   const description = req.body.description;
-   const location = req.body.location;
-   const imageUrl = req.file.filename;
+    const title = req.body.title.replace("'", "\\'");
+   const description = req.body.description.replace("'", "\\'");
+   const imageUrl = req.file.filename.replace("'", "\\'");
    const dateString = new Date().now;
 
    try{
-     let queryString = "UPDATE `articles` SET title ='" + title + "' , amount ='" + amount +"', beneficiary ='" +beneficiary +"', ministry = '" +ministry +"', description = '" +description +"', location ='" +location +"', date_updated =  '" +dateString +"', image_url =  '" +imageUrl +"' WHERE id = '" +req.params.id+"' ";
+     let queryString = "UPDATE `articles` SET title ='" + title + "' ,  description = '" +description +"',  date_updated =  '" +dateString +"', image_url =  '" +imageUrl +"' WHERE id = '" +req.params.id+"' ";
    db.query(queryString,   (err, result) => {
          if (err) {
             console.log(err);
