@@ -2,17 +2,15 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 
+
 const userController = require('../controller/user');
 const articleController = require('../controller/article');
 const uplaod = require('../middleware/upload');
 
-//admin page
-router.get("/admin", (req, res)=>{
-res.render('pages/index');});
 
 
 //create user
-router.post('/user', (req,res, next)=>{console.log("request recieved"); next();}, userController.createAccount);
+router.post('/user',  userController.createAccount);
 //get user
 router.get('/user/:id', auth, userController.account);
 //get al;l users

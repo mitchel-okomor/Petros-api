@@ -1,7 +1,7 @@
 const multer = require('multer');
 
 
-// SET STORAGE
+// define storage area and image file name
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'public/');

@@ -1,9 +1,9 @@
 const http = require('http');
+const path = require('path');
 
 
 const express = require('express');
-const logger = require('morgan');
-var cors = require('cors')
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const api = require('./routes/api'); 
 
@@ -13,8 +13,6 @@ const app = express();
 //set view engine
 app.set('view engine', 'ejs');
 
-// Log requests to the console.
-app.use(logger('dev'));
 
 app.use(cors());
   //set CORS
@@ -31,9 +29,18 @@ app.use(cors());
   app.use(bodyParser.json());
   //serve static files
 app.use(express.static('public'))
+app.use(express.static(path.join(__dirname, 'build')));
+
 // Bundle API routes.
 app.use('/', api);
 
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'), function(err) {
+    if (err) {
+      res.status(500).send(err)
+    }
+  });
+});
 const server = http.createServer(app);
 server.listen(4000);
 server.on('listening', () => {console.log("server connected")});

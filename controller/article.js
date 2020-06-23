@@ -4,7 +4,7 @@ const db = require('../services/db');
 
 //create an article
 exports.createArticle =  (req, res) => {
-  console.log(req.body);
+
     const id = uuidv4().replace("'", "\\'");
     const userId = req.params.id.replace("'", "\\'");
       const title = req.body.title.replace("'", "\\'");
@@ -66,7 +66,7 @@ exports.article = async (req, res) => {
 //view all articles
 exports.allArticles = async (req, res) => {
   try {
-    let queryString = "SELECT * FROM articles LIMIT 10 ";
+    let queryString = "SELECT * FROM articles ORDER BY date DESC LIMIT 10";
     await db.query(queryString,   (err, result) => {
          if(result.length < 0){
               return res.status(400).json ({
@@ -82,7 +82,6 @@ exports.allArticles = async (req, res) => {
             }
     });
   } catch (error) {
-    console.log (error);
     return res.status(400).json ({
       status: "error",
       error: error
@@ -124,11 +123,10 @@ exports.updateArticle = async (req, res) => {
 
     const title = req.body.title.replace("'", "\\'");
    const description = req.body.description.replace("'", "\\'");
-   const imageUrl = req.file.filename.replace("'", "\\'");
    const dateString = new Date().now;
 
    try{
-     let queryString = "UPDATE `articles` SET title ='" + title + "' ,  description = '" +description +"',  date_updated =  '" +dateString +"', image_url =  '" +imageUrl +"' WHERE id = '" +req.params.id+"' ";
+     let queryString = "UPDATE `articles` SET title ='" + title + "' ,  description = '" +description +"',  date_updated =  '" +dateString +"' WHERE id = '" +req.params.id+"' ";
    db.query(queryString,   (err, result) => {
          if (err) {
             console.log(err);
